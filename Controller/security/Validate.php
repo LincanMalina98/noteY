@@ -36,8 +36,35 @@
     {
 
       $this->filedIsEmpty();
+      $this->validateFile();
 
       return $this->errors;
+    }
+
+    private function validateFile()
+    {
+      $targetDirectory = "../uploads/";
+      $fileName = basename($_FILES['file']['name']);
+      $targetFilePath = $targetDirectory . $fileName;
+      $fileSize = $_FILES['file']['size'];
+      $fileType = pathinfo($targetFilePath,PATHINFO_EXTENSION);
+
+      $allowTypes = array('jpg','png','gif','pdf','jpeg','docx','txt','pptx');
+
+      if(empty($fileName))
+      {
+        $this->addError('file','This field should not be empty!');
+      }else{
+        if($fileSize > 5000000)
+        {
+          $this->addError('file','File size is to big!');
+        }
+
+        if(!in_array($fileType,$allowTypes))
+        {
+          $this->addError('file','Document type is not allowed!');
+        }
+      }
     }
 
     private function filedIsEmpty()

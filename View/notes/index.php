@@ -53,6 +53,12 @@
         }
 
         unset($_SESSION['delete']);
+
+        if (isset($_SESSION['delete_file'])) {
+          echo "<div class='alert alert-primary' role='alert' id='alert-update'>{$_SESSION['delete_file']}</div>";
+        }
+
+        unset($_SESSION['delete_file']);
       ?>
       <div class='col-md-6'>
         <a href='create.php ' class='btn btn-custom-primary btn-md'>Create note</a>
@@ -72,10 +78,11 @@
           <h6 class="card-header" style="color: #8fafe7;">YOUR NOTE</h6>
           <div class="card-body">
             <h4 class="card-title"><?php {echo $note['title'] ; }?></h4>
-            <p class="card-text"><?php {echo substr($note['description'],0,100); }?></p>
+            <p class="card-text"><?php {echo substr( $note['description'],0,100); if(strlen($note['description']) > 100){echo "...";}}?></>
             <p class="card-text text-end">Created at: <?php {echo $note['date'];}?></p>
             <a href="update.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-custom-edit">Edit</a>
             <a href="delete.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-custom-danger">Delete</a>
+            <a href="view.php?id=<?php echo $note['id']; ?>&file_name=<?php echo $note['file']; ?>" class="btn btn-sm btn-custom-view">View</a>
           </div>
         </div>
         </div>

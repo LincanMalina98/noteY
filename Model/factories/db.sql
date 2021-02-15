@@ -13,6 +13,7 @@ create table notes(
     title varchar(256),
     description text,
     date date,
+    file varchar(256),
     PRIMARY KEY(id),
     FOREIGN KEY(user_id) REFERENCES users(id)
 );

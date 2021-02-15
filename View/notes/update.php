@@ -12,10 +12,13 @@
     header("Location: login.php");
   }
 
-
   $access = new Notes(null);
-  $access->validateRoute($_GET['id']);
+  $verify =  $access->isRouteValid($_GET['id']);
 
+  if($verify == false)
+  {
+    header("Location: forbidden.php");
+  }
 
   if(isset($_GET['id']))
   {
@@ -32,7 +35,8 @@
     $validate = new Validate(
       array(
         'title' => $_POST['title'],
-        'description' => $_POST['description']
+        'description' => $_POST['description'],
+        'file' => $_FILES['file']['name']
       )
     );
 
@@ -59,7 +63,7 @@
     </div>
     <div class="row centered-box mt-3">
       <div class="col-md-6">
-        <form action="update.php" method="post">
+        <form action="update.php" method="post" enctype="multipart/form-data">
           <input type="hidden" value="<?php echo $result['id']; ?>" name="id" />
           <div class="form-group">
             <label for="title">Title:</label>
@@ -73,6 +77,13 @@
             <textarea name="description" id="note" cols="30" rows="10" class="form-control form-control-sm" placeholder="Enter your thoughts..."><?php echo $result['description'];?></textarea>
             <?php if (isset($errors) && isset($errors['description'])) { ?>
               <p class="text-danger"><?php echo $errors["description"] ; ?></p>
+            <?php } ?>
+          </div>
+          <div class="form-group mt-3">
+            <label for="file" ><strong>File:</strong></label>
+            <input type="file" name = "file" class="custom-file-input form-control" value="<?php echo $result['file'];?>">
+            <?php if (isset($errors) && isset($errors['file'])) { ?>
+              <p class="text-danger"><?php echo $errors["file"] ; ?></p>
             <?php } ?>
           </div>
           <div class="form-group mt-3">
