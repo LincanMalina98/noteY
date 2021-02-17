@@ -1,5 +1,4 @@
 <div class="sidenav">
-  <a href="#">Dashboard</a>
   <a href="../notes/index.php">Notes</a>
   <div>
     <form action="logout.php" method="post">

@@ -19,7 +19,7 @@
       return $password = md5($this->data['password']);
     }
 
-    private function selectUsersCredential()
+    private function selectUserCredential()
     {
 
       $sql = "SELECT * FROM users WHERE email =:email AND password=:password LIMIT 1";
@@ -32,7 +32,7 @@
 
       $stmt->execute($params);
 
-      return  $stmt->fetch(PDO::FETCH_ASSOC);
+      return $stmt->fetch(PDO::FETCH_ASSOC);
 
     }
 
@@ -40,7 +40,7 @@
     {
        $errors = '';
 
-       $this->records = $this->selectUsersCredential();
+       $this->records = $this->selectUserCredential();
 
         if ($this->data['email'] === $this->records['email'] && md5($this->data['password']) === $this->records['password']) {
 

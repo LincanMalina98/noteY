@@ -3,6 +3,8 @@
 class Register extends Connection
 {
 
+  use Records;
+
   private $data;
   protected $con;
 
@@ -22,19 +24,15 @@ class Register extends Connection
   {
 
     try {
-
-        $sql = "INSERT INTO users(name, email, password) VALUES (:name, :email, :password)";
-        $stmt = $this->con->prepare($sql);
-
         $params = [
           'name' => $this->data['name'],
           'email' => $this->data['email'],
           'password' => $this->encryptPassword(),
         ];
 
-        Sessions::setSession('success','Your are registered successfully!');
+        $this->queryBuilder($this->con , "INSERT INTO users(name, email, password) VALUES (:name, :email, :password)",$params);
 
-        $stmt->execute($params);
+        Sessions::setSession('success','Your are registered successfully!');
 
     }catch (PDOException $e){
       echo "Cannot insert data into the database" . $e->getMessage();

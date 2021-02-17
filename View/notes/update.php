@@ -15,10 +15,10 @@
   $access = new Notes(null);
   $verify =  $access->isRouteValid($_GET['id']);
 
-  if($verify == false)
-  {
-    header("Location: forbidden.php");
-  }
+//  if($verify == false)
+//  {
+//    header("Location: forbidden.php");
+//  }
 
   if(isset($_GET['id']))
   {
@@ -32,22 +32,30 @@
   if(isset($_POST['submit']))
   {
 
-    $validate = new Validate(
-      array(
-        'title' => $_POST['title'],
-        'description' => $_POST['description'],
-        'file' => $_FILES['file']['name']
-      )
-    );
+    if($result['file'] !== null)
+    {
+      $validate = new Validate(
+        array(
+          'title' => $_POST['title'],
+          'description' => $_POST['description'],
+          'file' => $_FILES['file']['name']
+        )
+      );
 
-    $errors = $validate->validateNotesData();
-    $escapedChars = $validate->escapeHtmlChars();
+      $errors = $validate->validateNotesData();
+      $escapedChars = $validate->escapeHtmlChars();
 
-    if(count($errors) == 0){
 
-      $edit_note = new Notes($escapedChars);
+      if (count($errors) == 0) {
+
+        $edit_note = new Notes($escapedChars);
+        $edit_note->update();
+
+      }
+    }else{
+
+      $edit_note = new Notes($_POST);
       $edit_note->update();
-
     }
 
   }
@@ -79,13 +87,15 @@
               <p class="text-danger"><?php echo $errors["description"] ; ?></p>
             <?php } ?>
           </div>
+          <?php if($result['file'] === null || empty($result['file'])): ?>
           <div class="form-group mt-3">
             <label for="file" ><strong>File:</strong></label>
-            <input type="file" name = "file" class="custom-file-input form-control" value="<?php echo $result['file'];?>">
+            <input type="file" name = "file" class="custom-file-input form-control">
             <?php if (isset($errors) && isset($errors['file'])) { ?>
               <p class="text-danger"><?php echo $errors["file"] ; ?></p>
             <?php } ?>
           </div>
+          <?php endif; ?>
           <div class="form-group mt-3">
             <button  type="submit" name="submit" class="btn btn-sm btn-custom-primary">Edit</button>
           </div>

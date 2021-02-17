@@ -14,8 +14,21 @@
       $this->con = $this->openConnection();
     }
 
+    private function fileHandle()
+    {
+
+        $targetFilePath = "../uploads/" . $_FILES['file']['name'];
+        $ext = pathinfo($targetFilePath, PATHINFO_EXTENSION);
+        $this->fileName = basename($_FILES['file']['name'], "." . $ext);
+
+      return $ext;
+    }
+
     public function insertFormData()
     {
+      $ext = $this->fileHandle();
+
+      $actualname = $this->fileName . $_SESSION['id']."." .$ext;
 
       try {
         $params = [
@@ -23,10 +36,15 @@
           'title' => $this->data['title'],
           'description' => $this->data['description'],
           'date' => date('Y-m-d H:i:s'),
-          'file'=>$_FILES['file']['name']
+          'file'=>$actualname
         ];
 
         $this->queryBuilder($this->con,"INSERT INTO notes(user_id ,title, description, date,file)VALUES(:user_id,:title, :description, :date,:file)",$params);
+
+        if(!file_exists("../uploads/{$actualname}"))
+        {
+          move_uploaded_file($_FILES['file']['tmp_name'],"../uploads/{$actualname}");
+        }
 
         Sessions::setSession('create','Your note was successfully created!');
 
@@ -38,13 +56,7 @@
     }
 
 
-//    public function selectAllNotes()
-//    {
-//     return  $this->queryBuilder($this->con,"SELECT * FROM notes WHERE user_id = {$_SESSION['id']}",null);
-//
-//    }
-
-    public function selectNote($id) //foloseste query builder si aici
+    public function selectNote($id)
     {
       $stmt = $this->con->query( "SELECT * FROM notes WHERE id = {$id}");
 
@@ -77,21 +89,50 @@
 
     public function update()
     {
-      $params=[
-        'title' => $_POST['title'],
-        'description' =>$_POST['description'],
-        'id'=>$_POST['id'],
-        'file' => $_FILES['file']['name']
-      ];
-      $this->queryBuilder($this->con,"UPDATE notes SET title=:title, description=:description ,file=:file WHERE id=:id",$params);
 
-      Sessions::setSession('update','Your note was successfully updated!');
+      $result = $this->selectNote($_POST['id']);
+      $ext = $this->fileHandle();
 
-      header("Location: index.php");
+      $actualname = $this->fileName . $_SESSION['id']."." .$ext;
+
+      if($result['file'] === NULL || empty($result['file'])) {
+        $params = [
+          'title' => $_POST['title'],
+          'description' => $_POST['description'],
+          'id' => $_POST['id'],
+          'file' => $actualname
+        ];
+        $this->queryBuilder($this->con, "UPDATE notes SET title=:title, description=:description ,file=:file WHERE id=:id", $params);
+
+        if(!file_exists("../uploads/{$actualname}"))
+        {
+          move_uploaded_file($_FILES['file']['tmp_name'],"../uploads/{$actualname}");
+        }
+
+        Sessions::setSession('update', 'Your note was successfully updated!');
+
+        header("Location: index.php");
+      }else{
+        $params = [
+          'title' => $_POST['title'],
+          'description' => $_POST['description'],
+          'id' => $_POST['id'],
+        ];
+        $this->queryBuilder($this->con, "UPDATE notes SET title=:title, description=:description WHERE id=:id", $params);
+
+        Sessions::setSession('update', 'Your note was successfully updated!');
+
+        header("Location: index.php");
+      }
+
+
     }
 
     public function delete($id)
     {
+
+      $record = $this->selectNote($id);
+
       $params = [
         'id' => $id,
       ];
@@ -99,6 +140,11 @@
      $this->queryBuilder($this->con,"DELETE FROM notes WHERE id =:id ",$params);
 
      Sessions::setSession('delete','Your note was successfully deleted!');
+
+      if(file_exists("../uploads/{$record['file']}") === true)
+      {
+        unlink("../uploads/{$record['file']}");
+      }
 
       header("Location: index.php");
     }
@@ -109,7 +155,7 @@
     }
 
 
-    public function isRouteValid($id) //query builder si aici
+    public function isRouteValid($id)
     {
       $sql = "SELECT user_id FROM notes WHERE id=:id";
       $stmt = $this->con->prepare($sql);

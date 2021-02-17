@@ -1,12 +1,14 @@
 <?php
-  session_start();
-  $title = 'Login';
+
+session_start();
+$title = 'Login';
 
 include_once ("../includes/files.php");
-  include("../../Controller/Login.php");
+include("../../Controller/Login.php");
 include_once ("../includes/layout/header.php");
 
-  if(isset($_SESSION['id'])){
+  if(isset($_SESSION['id']))
+  {
     header('location:index.php');
     exit();
   }

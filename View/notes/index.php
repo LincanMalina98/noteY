@@ -17,7 +17,7 @@
 
   $paginator = new Pagination(4,'notes');
   $notes = $paginator->getAllRecords();
-
+  
   $results = count($notes);
 
 ?>
@@ -82,7 +82,7 @@
             <p class="card-text text-end">Created at: <?php {echo $note['date'];}?></p>
             <a href="update.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-custom-edit">Edit</a>
             <a href="delete.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-custom-danger">Delete</a>
-            <a href="view.php?id=<?php echo $note['id']; ?>&file_name=<?php echo $note['file']; ?>" class="btn btn-sm btn-custom-view">View</a>
+            <a href="view.php?id=<?php echo $note['id']; ?>" class="btn btn-sm btn-custom-view">View</a>
           </div>
         </div>
         </div>
