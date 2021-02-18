@@ -6,7 +6,7 @@
     public function GetAllRecordsNumber($con, $table_name,$id)
     {
 
-      $sql = "SELECT * FROM {$table_name} WHERE user_id=:id";
+      $sql = "SELECT * FROM {$table_name} WHERE user_id=:id AND status = 2";
       $stmt = $con->prepare($sql);
 
       $params=[

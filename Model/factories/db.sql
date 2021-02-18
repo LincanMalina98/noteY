@@ -14,6 +14,7 @@ create table notes(
     description text,
     date date,
     file varchar(256),
+    status tinyInt(1),
     PRIMARY KEY(id),
     FOREIGN KEY(user_id) REFERENCES users(id)
 );

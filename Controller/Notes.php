@@ -24,6 +24,21 @@
       return $ext;
     }
 
+    public function selectAllFavoriteNotes()
+    {
+      $sql = "SELECT * FROM notes WHERE user_id=:id AND status=:status";
+      $stmt = $this->con->prepare($sql);
+
+      $params=[
+        'id'=>$_SESSION['id'],
+        'status' => FAV
+      ];
+
+      $stmt->execute($params);
+
+      return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function insertFormData()
     {
       $ext = $this->fileHandle();
@@ -36,10 +51,11 @@
           'title' => $this->data['title'],
           'description' => $this->data['description'],
           'date' => date('Y-m-d H:i:s'),
-          'file'=>$actualname
+          'file'=>$actualname,
+          'status' => NFAV
         ];
 
-        $this->queryBuilder($this->con,"INSERT INTO notes(user_id ,title, description, date,file)VALUES(:user_id,:title, :description, :date,:file)",$params);
+        $this->queryBuilder($this->con,"INSERT INTO notes(user_id ,title, description, date,file,status)VALUES(:user_id,:title, :description, :date,:file,:status)",$params);
 
         if(!file_exists("../uploads/{$actualname}"))
         {
@@ -76,7 +92,7 @@
 
       $this->queryBuilder($this->con,"UPDATE notes SET file=:file WHERE id=:id",$params);
 
-      Sessions::setSession('delete_file','Your file was successfully deleted!');;
+      Sessions::setSession('delete_file','Your file was successfully deleted!');
 
 
       if(file_exists("../uploads/{$filename}") === true)
@@ -125,6 +141,17 @@
         header("Location: index.php");
       }
 
+
+    }
+
+    public function setNoteStatus($status,$id)
+    {
+      $params=[
+        'id'=>$id,
+        'status' => $status
+      ];
+
+      $this->queryBuilder($this->con,"UPDATE notes SET status=:status WHERE id=:id",$params);
 
     }
 

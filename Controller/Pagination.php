@@ -55,7 +55,7 @@
 
       $this->pageLimit();
 
-      return  $this->queryBuilder($this->con,"SELECT * FROM {$this->table_name} WHERE user_id = {$_SESSION['id']} LIMIT {$this->page_first_result},{$this->results_per_page}",null);
+      return  $this->queryBuilder($this->con,"SELECT * FROM {$this->table_name} WHERE user_id = {$_SESSION['id']} AND status = 2 LIMIT {$this->page_first_result},{$this->results_per_page}",null);
     }
 
     public function links(): void

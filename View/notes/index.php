@@ -17,8 +17,15 @@
 
   $paginator = new Pagination(4,'notes');
   $notes = $paginator->getAllRecords();
-  
+
   $results = count($notes);
+
+
+  if(isset($_POST['submit']))
+  {
+    $status = new Notes(null);
+    $status->setNoteStatus(FAV,$_POST['id']);
+  }
 
 ?>
  <?php if($results == 0):?>
@@ -76,6 +83,14 @@
         <div class='col-md-3'>
         <div class="card mt-2">
           <h6 class="card-header" style="color: #8fafe7;">YOUR NOTE</h6>
+          <?php if($note['status'] == NFAV): ?>
+          <span class="text-end">
+            <form action="index.php" method="post">
+              <input type="hidden" name="id" value="<?php echo $note['id']; ?>"/>
+              <button type="submit" name="submit" class="btn btn-sm btn-light material-icons">grade</button>
+            </form>
+          </span>
+          <?php endif; ?>
           <div class="card-body">
             <h4 class="card-title"><?php {echo $note['title'] ; }?></h4>
             <p class="card-text"><?php {echo substr( $note['description'],0,100); if(strlen($note['description']) > 100){echo "...";}}?></>
@@ -86,7 +101,7 @@
           </div>
         </div>
         </div>
-        <?php endforeach;?>
+       <?php endforeach;?>
     </div>
     </div>
     <div class="mt-3">

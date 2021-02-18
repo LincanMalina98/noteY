@@ -19,3 +19,8 @@ function closeAlertDelete(){
 function closeAlertRegister(){
   document.getElementById("alert").style.display = "none";
 }
+
+// function func()
+// {
+//   document.getElementById("favorite_button").style.color="yellow";
+// }
